@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: multi-pvc-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: multi-pvc-app
+  template:
+    metadata:
+      labels:
+        app: multi-pvc-app
+    spec:
+      containers:
+        - name: app
+          image: busybox
+          command: ["sleep", "3600"]
+          volumeMounts:
+            - mountPath: "/data/config"
+              name: config-volume
+            - mountPath: "/data/logs"
+              name: logs-volume
+      volumes:
+        - name: config-volume
+          persistentVolumeClaim:
+            claimName: pvc-config
+        - name: logs-volume
+          persistentVolumeClaim:
+            claimName: pvc-logs
